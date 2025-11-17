@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // <-- Ajout de useCallback
 import {
   Box,
   Grid,
   Paper,
   Typography,
-  Tab,
-  Tabs,
+  Tab, // <-- Gardé, car il est utilisé par TabList
   Card,
   CardContent,
   Button,
@@ -20,24 +19,23 @@ import {
   MenuItem,
   TextField,
 } from '@mui/material';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom'; // <-- 'navigate' supprimé
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import {
   Computer as ComputerIcon,
   NetworkCheck as NetworkIcon,
   Keyboard as KeyboardIcon,
   Image as ImageIcon,
-  WindowMaximize as WindowIcon,
+  Window as WindowIcon,
   Language as BrowserIcon,
   Settings as ProcessIcon,
-  MousePointer as MouseIcon,
+  Mouse as MouseIcon,
   Terminal as TerminalIcon,
 } from '@mui/icons-material';
 import { victimService, logService } from '../services/api';
 
 const VictimDetails = () => {
   const { victimId } = useParams();
-  const navigate = useNavigate();
   const [victim, setVictim] = useState(null);
   const [tabValue, setTabValue] = useState('keystrokes');
   const [loading, setLoading] = useState(true);
@@ -53,21 +51,17 @@ const VictimDetails = () => {
     processes: [],
   });
 
-  useEffect(() => {
-    fetchVictimDetails();
-    fetchAllData();
-  }, [victimId]);
-
-  const fetchVictimDetails = async () => {
+  // Fonctions enveloppées dans useCallback pour le useEffect
+  const fetchVictimDetails = useCallback(async () => {
     try {
       const response = await victimService.getVictimById(victimId);
       setVictim(response.data);
     } catch (error) {
       console.error('Error fetching victim details:', error);
     }
-  };
+  }, [victimId]);
 
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     setLoading(true);
     try {
       const [
@@ -99,7 +93,12 @@ const VictimDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [victimId]);
+
+  useEffect(() => {
+    fetchVictimDetails();
+    fetchAllData();
+  }, [fetchVictimDetails, fetchAllData]); // <-- Dépendances ajoutées
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

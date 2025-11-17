@@ -8,26 +8,28 @@ import {
 
 const StatsCard = ({ title, value, icon, color }) => {
   return (
-    <Card sx={{ minWidth: 275, height: '100%' }}>
+    <Card sx={{ height: '100%', overflow: 'hidden' }}>
       <CardContent>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Box>
-            <Typography color="textSecondary" gutterBottom variant="overline">
+        <Box display="flex" justifyContent="space-between" alignItems="center" width="230px">
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography color="textSecondary" gutterBottom variant="overline" sx={{ fontWeight: 600 }}>
               {title}
             </Typography>
-            <Typography variant="h4" component="div">
+            <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
               {value}
             </Typography>
           </Box>
           <Box
             sx={{
-              backgroundColor: color,
+              background: color,
               borderRadius: 1,
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              boxShadow: 3,
+              flexShrink: 0, // Prevents the icon box from shrinking
             }}
           >
             {icon}
