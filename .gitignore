@@ -1,1 +1,3 @@
-venv/
+victim_script/venv/
+attacker_dashboard/frontend/node_modules/
+attacker_dashboard/backend/venv/
