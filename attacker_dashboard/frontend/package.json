@@ -28,8 +28,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:proxy": "set HTTPS=true&&react-scripts start"
   },
+  "proxy": "http://10.101.11.83:5000",
   "eslintConfig": {
     "extends": [
       "react-app",
